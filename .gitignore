@@ -1,0 +1,11 @@
+./dist
+/dist
+dist
+package-lock.json
+/package-lock.json
+./package-lock.json
+./.cache
+/.cache
+.cache
+node_modules
+.DS_Store
