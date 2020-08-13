@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from "react-dom";
 const { graphql, buildSchema } = require("graphql");
 import testing from "./helpers/testingTests";
-import atoms from "./Atoms/newComponentState";
+import atoms from "./Atoms/AtomState";
 import Hello from "./fnComponents/newComponent"
 import schema from "./schema.js";
 
@@ -15,14 +15,26 @@ import {
 } from 'recoil';
 
 //graphQL
-const root = { 
-  hello : "WHAT IS GOING ON? ",
-  say: "Something",
-  love: "and happiness"
-};
+const root = {
+  test1: "Jack",
+  test2: "Jetta",
+  test3: {
+    name: "Jack",
+    address: {
+      city: "Nowhere",
+      state: "Somewhere",
+      zip: 88899
+    }, 
+    age: 30
+  },
+  test4: [
+    {name: "test 4-1"}, {name: "test 4-2"}, {name: "test 4-3"}
+  ]
+}
+
 
 //graphQL
-let gotQL = graphql(schema, `{say, love}`, root)
+let gotQL = graphql(schema, `{test1, test3, test4}`, root)
 
 let blank = null;
 //graphQL
@@ -66,24 +78,24 @@ function TextInput() {
 const charCountState = selector({
   key: 'charCountState', // unique ID (with respect to other atoms/selectors)
   get: ({get}) => {
-    const text = get(atoms.textState);
+    const text = get(atoms.textStateAtom);
     return text.length;
   },
 });
 
 
-const updateButtonText = selector({
-  key: 'differentStatesOfThings',
+const updateEditorText = selector({
+  key: 'editorState',
   get: ({get}) => {
-    const buttonTextVal = i.data;
-    return buttonTextVal.text;
+    //const buttonTextVal = i.data;
+    //return buttonTextVal.text;
   }
 })
 
 function buttonUpdater(){
-  const buttonVal = "JACK "; //useRecoilValue(updateButtonText); creates a circular dependency but
+  const buttonVal = "PRESS ME"; //useRecoilValue(updateButtonText); creates a circular dependency but
   //only because I'm not 100% clear on what I'm doing. 
-  return <>Val: {buttonVal}</>
+  return <>{buttonVal}</>
 }
 
 function CharacterCount() {
@@ -97,7 +109,7 @@ function App() {
   return (
     <RecoilRoot>
       <CharacterCounter />
-      <Hello thisText = {buttonUpdater}/>
+      <Hello thisText = {blank}/>
     </RecoilRoot>
   );
 }

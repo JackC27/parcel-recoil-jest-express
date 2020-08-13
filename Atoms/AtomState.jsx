@@ -8,20 +8,24 @@ import{
 
 const atoms = {};
 
-atoms.newState = atom({
+atoms.newStateAtom = atom({
   key: "newAtomKey",
   default: {}
 })
 
-
-atoms.textState = atom({
+atoms.textStateAtom = atom({
   key: "textState", // unique ID (with respect to other atoms/selectors)
   default: "", // default value (aka initial value)
 });
 
-atoms.differentState = atom({
+atoms.differentStateAtom = atom({
   key: "differentStatesOfThings",
   default: "",
 });
+
+atoms.editorStateAtom = atom({
+  key: "editorState",
+  default: ""
+})
 
 module.exports = atoms;

@@ -6,7 +6,7 @@ function Hello(props){
   console.log(" PROPS ", props);
   return ( 
     <div>
-      <button onClick={ e => console.log( "Button click @ ", e.target.value) }>{props.thisText()}</button>
+      <button onClick={ e => console.log( "Button click @ ", e.target.value) }>{props.thisText}</button>
     </div>    
   )
 }
