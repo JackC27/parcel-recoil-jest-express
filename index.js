@@ -21,7 +21,7 @@ const schema = buildSchema(`
 
 
 const root = { 
-  hello : "WHAT IN THE FUCK? ",
+  hello : "WHAT IS GOING ON? ",
   say: "Something",
   love: "and happiness"
 };
