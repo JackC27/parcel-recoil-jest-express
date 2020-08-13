@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from "react-dom";
 const { graphql, buildSchema } = require("graphql");
-import testing from "./helpers/testingTests"
+import testing from "./helpers/testingTests";
+import atoms from "./Atoms/newComponentState";
+import Hello from "./fnComponents/newComponent"
+import schema from "./schema.js";
 
 import {
   RecoilRoot,
@@ -11,36 +14,29 @@ import {
   useRecoilValue,
 } from 'recoil';
 
-const schema = buildSchema(`
-  type Query { 
-    hello: String
-    say: String
-    love: String
-  }
-`);
-
-
+//graphQL
 const root = { 
   hello : "WHAT IS GOING ON? ",
   say: "Something",
   love: "and happiness"
 };
 
+//graphQL
+let gotQL = graphql(schema, `{say, love}`, root)
 
-let x = graphql(schema, `{say, love}`, root)
-
-x.then( response => { 
+let blank = null;
+//graphQL
+gotQL.then( response => { 
   console.log( response );   
   return response;
 })
+.then( i => {
+  console.log( " I ", i)
+  blank = i.data.say;
+  console.log("BLANK ", blank);
+})
 
 
-
-
-const textState = atom({
-  key: 'textState', // unique ID (with respect to other atoms/selectors)
-  default: '', // default value (aka initial value)
-});
 
 function CharacterCounter() {
   return (
@@ -52,7 +48,7 @@ function CharacterCounter() {
 }
 
 function TextInput() {
-  const [text, setText] = useRecoilState(textState);
+  const [text, setText] = useRecoilState(atoms.textState);
 
   const onChange = (event) => {
     setText(event.target.value);
@@ -70,11 +66,25 @@ function TextInput() {
 const charCountState = selector({
   key: 'charCountState', // unique ID (with respect to other atoms/selectors)
   get: ({get}) => {
-    const text = get(textState);
-
+    const text = get(atoms.textState);
     return text.length;
   },
 });
+
+
+const updateButtonText = selector({
+  key: 'differentStatesOfThings',
+  get: ({get}) => {
+    const buttonTextVal = i.data;
+    return buttonTextVal.text;
+  }
+})
+
+function buttonUpdater(){
+  const buttonVal = "JACK "; //useRecoilValue(updateButtonText); creates a circular dependency but
+  //only because I'm not 100% clear on what I'm doing. 
+  return <>Val: {buttonVal}</>
+}
 
 function CharacterCount() {
   const count = useRecoilValue(charCountState);
@@ -87,6 +97,7 @@ function App() {
   return (
     <RecoilRoot>
       <CharacterCounter />
+      <Hello thisText = {buttonUpdater}/>
     </RecoilRoot>
   );
 }

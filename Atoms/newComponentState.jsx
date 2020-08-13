@@ -6,10 +6,22 @@ import{
   useRecoilValue
 } from "recoil";
 
-const newState = atom({
+const atoms = {};
+
+atoms.newState = atom({
   key: "newAtomKey",
-  default: "",
-  value: 1096
+  default: {}
 })
 
-module.exports = newState;
+
+atoms.textState = atom({
+  key: "textState", // unique ID (with respect to other atoms/selectors)
+  default: "", // default value (aka initial value)
+});
+
+atoms.differentState = atom({
+  key: "differentStatesOfThings",
+  default: "",
+});
+
+module.exports = atoms;
