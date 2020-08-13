@@ -1,7 +1,7 @@
-console.log(" HELLO WORLD ")
-
 import React from 'react';
 import ReactDOM from "react-dom";
+const { graphql, buildSchema } = require("graphql");
+import testing from "./helpers/testingTests"
 
 import {
   RecoilRoot,
@@ -10,6 +10,31 @@ import {
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
+
+const schema = buildSchema(`
+  type Query { 
+    hello: String
+    say: String
+    love: String
+  }
+`);
+
+
+const root = { 
+  hello : "WHAT IN THE FUCK? ",
+  say: "Something",
+  love: "and happiness"
+};
+
+
+let x = graphql(schema, `{say, love}`, root)
+
+x.then( response => { 
+  console.log( response );   
+  return response;
+})
+
+
 
 
 const textState = atom({
@@ -67,4 +92,5 @@ function App() {
 }
 
 console.log(document.getElementById("app"));
+
 ReactDOM.render(App(), document.getElementById("app"))

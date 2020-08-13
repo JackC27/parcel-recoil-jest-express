@@ -1,4 +1,5 @@
 let testFn = {};
+
 testFn.x = (a, b) => {
   return a * b;
 }
@@ -21,6 +22,6 @@ testFn.z = (...arr) => {
   return res;
 }
 
-console.log( testFn.z("Nancy", "Nate", "David", ["Jack", "Tom", "Jetta"], ["cup", "peach", "book", 5]) );
+//console.log( testFn.z("Nancy", "Nate", "David", ["Jack", "Tom", "Jetta"], ["cup", "peach", "book", 5]) );
 
 module.exports = testFn;
