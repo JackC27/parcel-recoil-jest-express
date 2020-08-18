@@ -9,11 +9,15 @@ import {
   useSetRecoilState,
 } from 'recoil';
 
+//current state of text editor
+//receives updates onChange
 const editorStateAtom = atom({
   key: "editorStateAtom",
   default: ""
 })
 
+//Editor state updater selector.
+//I guess we can use this to update state as well? 
 const updateEditorSelector = selector({
   key: 'editorStateSelector',
   get: ({get}) => ( get(editorStateAtom) ),
@@ -23,6 +27,11 @@ const updateEditorSelector = selector({
 const wordCountAtom = atom({
   key: "wordCountAtom",
   default: 0,
+})
+
+const atomWithNoSelector = atom({
+  key: "bigbadwilly",
+  default: "Play on"
 })
 
 const wordCountSelector = selector({
@@ -62,7 +71,7 @@ function EditorText(props) {
 }
 
 function WordCount(){
-  const counter = useRecoilValue(wordCountSelector);
+  const counter = useRecoilValue(wordCountAtom);
 
   return (
     <div className="container">
@@ -90,12 +99,23 @@ function ButtonRow(props) {
 
 }
 
+function CallHook(props){
+  let playing = useRecoilState(atomWithNoSelector);
+  return(
+    <>
+      <p>{playing}</p> {/*Throws an because: "Functions are not valid as React child*/}
+      <p>{props.what}</p>
+    </>
+  )
+}
+
 function App() {
   return (
-    <RecoilRoot>
+    <RecoilRoot>      
       <EditorText heading = "Simple text editing with word count" />
       <WordCount />
       <ButtonRow className="buttons-container" />
+      <CallHook what="tamborine" />
     </RecoilRoot>
   );
 }
