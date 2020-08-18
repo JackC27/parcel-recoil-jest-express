@@ -1,17 +1,12 @@
 import React from 'react';
 import ReactDOM from "react-dom";
-//const { graphql, buildSchema } = require("graphql");
-import testing from "./helpers/testingTests";
-import atoms from "./Atoms/AtomState";
-import {Hello, Test1} from "./fnComponents/newComponent"
-//import schema from "./schema.js";
-
 import {
   RecoilRoot,
   atom,
   selector,
   useRecoilState,
   useRecoilValue,
+  useSetRecoilState,
 } from 'recoil';
 
 const editorStateAtom = atom({
@@ -36,10 +31,11 @@ const wordCountSelector = selector({
   set: ({set}, newValue) => { set(wordCountAtom, newValue) }
 })
 
-// /Components that need to read from and write to an atom should use useRecoilState() as shown below:
+//Components that need to read from and write to an atom should use useRecoilState() as shown below:
 function EditorText(props) {
   const [copy, setEditorText] = useRecoilState(updateEditorSelector);
-  const [counter, setCounterInt] = useRecoilState(wordCountSelector);
+  
+  const setCounterInt = useSetRecoilState(wordCountSelector);
   
   const captureText = e => {
     setEditorText(e.target.value); 
@@ -57,7 +53,7 @@ function EditorText(props) {
 
   return (
     <div className="container">
-      <p id='title'>A simple text editor with word counting</p>      
+      <p id='title'>{props.heading}</p>      
       <div id='editor'>
         <textarea id="editorInput" onChange={captureText} value={copy}></textarea>
       </div>
@@ -66,7 +62,7 @@ function EditorText(props) {
 }
 
 function WordCount(){
-  const [counter, setCounterInt] = useRecoilState(wordCountSelector);
+  const counter = useRecoilValue(wordCountSelector);
 
   return (
     <div className="container">
@@ -76,16 +72,17 @@ function WordCount(){
 }
 
 function Button(props){
-
   return (
     <button className={props.value} onClick={props.action}>{props.value}</button>
   )
 }
 
-function ButtonRow() {
+function ButtonRow(props) {
+  let save = useRecoilValue(editorStateAtom);
+  console.log( save );
   return(
-    <div className="button-row">
-      <Button action = { () => console.log(" SAVE ") } value = "Save" />
+    <div className={props.className}>
+      <Button action = { () => console.log(save) } value = "Save" />
       <Button action = { () => console.log(" DELETE ") }value = "Delete" />
       <Button action = { () => console.log(" STASH ") }value = "Stash" /> 
     </div>
@@ -96,9 +93,9 @@ function ButtonRow() {
 function App() {
   return (
     <RecoilRoot>
-      <EditorText />
+      <EditorText heading = "Simple text editing with word count" />
       <WordCount />
-      <ButtonRow />
+      <ButtonRow className="buttons-container" />
     </RecoilRoot>
   );
 }
