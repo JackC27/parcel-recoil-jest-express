@@ -1,7 +1,13 @@
 {
-  "name": "Recoil-Parcel-Express",
-  "version": "1.0.0",
+  "name": "Recoil-Parcel-Express-Jest",
+  "version": "0.0.2",
   "description": "",
+  "jest": {
+    "verbose": true,
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    }
+  },
   "main": "index.js",
   "keywords": [],
   "author": "",
@@ -16,7 +22,7 @@
     "graphql": "^15.3.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "recoil": "0.0.10"
+    "recoil": "*"
   },
   "devDependencies": {
     "@babel/core": "^7.11.0",
@@ -25,6 +31,7 @@
     "babel-jest": "^26.2.2",
     "jest": "^26.3.0",
     "parcel-bundler": "^1.12.4",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "react-test-renderer": "^16.13.1"
   }
 }

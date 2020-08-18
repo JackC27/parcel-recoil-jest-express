@@ -11,6 +11,8 @@ import {
 
 //current state of text editor
 //receives updates onChange
+
+/** Editor State Atom */
 const editorStateAtom = atom({
   key: "editorStateAtom",
   default: ""
@@ -18,6 +20,8 @@ const editorStateAtom = atom({
 
 //Editor state updater selector.
 //I guess we can use this to update state as well? 
+
+/** Editor State Selector */
 const updateEditorSelector = selector({
   key: 'editorStateSelector',
   get: ({get}) => ( get(editorStateAtom) ),
@@ -121,3 +125,5 @@ function App() {
 }
 
 ReactDOM.render(App(), document.getElementById("app"))
+
+module.exports(EditorText);
