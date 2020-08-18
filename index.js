@@ -1,7 +1,10 @@
 import React from 'react';
 import ReactDOM from "react-dom";
-const { graphql, buildSchema } = require("graphql");
-import testing from "./helpers/testingTests"
+//const { graphql, buildSchema } = require("graphql");
+import testing from "./helpers/testingTests";
+import atoms from "./Atoms/AtomState";
+import {Hello, Test1} from "./fnComponents/newComponent"
+//import schema from "./schema.js";
 
 import {
   RecoilRoot,
@@ -11,86 +14,93 @@ import {
   useRecoilValue,
 } from 'recoil';
 
-const schema = buildSchema(`
-  type Query { 
-    hello: String
-    say: String
-    love: String
-  }
-`);
-
-
-const root = { 
-  hello : "WHAT IS GOING ON? ",
-  say: "Something",
-  love: "and happiness"
-};
-
-
-let x = graphql(schema, `{say, love}`, root)
-
-x.then( response => { 
-  console.log( response );   
-  return response;
+const editorStateAtom = atom({
+  key: "editorStateAtom",
+  default: ""
 })
 
+const updateEditorSelector = selector({
+  key: 'editorStateSelector',
+  get: ({get}) => ( get(editorStateAtom) ),
+  set: ({set}, newValue) => { set(editorStateAtom, newValue) }
+})
 
+const wordCountAtom = atom({
+  key: "wordCountAtom",
+  default: 0,
+})
 
+const wordCountSelector = selector({
+  key: "wordCountSelector", 
+  get: ({get}) => ( get(wordCountAtom) ),
+  set: ({set}, newValue) => { set(wordCountAtom, newValue) }
+})
 
-const textState = atom({
-  key: 'textState', // unique ID (with respect to other atoms/selectors)
-  default: '', // default value (aka initial value)
-});
+// /Components that need to read from and write to an atom should use useRecoilState() as shown below:
+function EditorText(props) {
+  const [copy, setEditorText] = useRecoilState(updateEditorSelector);
+  const [counter, setCounterInt] = useRecoilState(wordCountSelector);
+  
+  const captureText = e => {
+    setEditorText(e.target.value); 
+    captureSpaces(e)
+  }
 
-function CharacterCounter() {
+  const captureSpaces = k => {
+    let x = k.target.value.split(" ");
+    let xLen = x.length;
+    if(x [ xLen - 1 ].length < 1){
+      xLen = xLen-1
+    }
+    setCounterInt(xLen);
+  }
+
   return (
-    <div>
-      <TextInput />
-      <CharacterCount />
+    <div className="container">
+      <p id='title'>A simple text editor with word counting</p>      
+      <div id='editor'>
+        <textarea id="editorInput" onChange={captureText} value={copy}></textarea>
+      </div>
     </div>
-  );
+  )
 }
 
-function TextInput() {
-  const [text, setText] = useRecoilState(textState);
-
-  const onChange = (event) => {
-    setText(event.target.value);
-  };
+function WordCount(){
+  const [counter, setCounterInt] = useRecoilState(wordCountSelector);
 
   return (
-    <div>
-      <input type="text" value={text} onChange={onChange} />
-      <br />
-      Echo: {text}
+    <div className="container">
+      <p id='count'>Word Count: {counter}</p>
     </div>
-  );
+  )
 }
 
-const charCountState = selector({
-  key: 'charCountState', // unique ID (with respect to other atoms/selectors)
-  get: ({get}) => {
-    const text = get(textState);
+function Button(props){
 
-    return text.length;
-  },
-});
-
-function CharacterCount() {
-  const count = useRecoilValue(charCountState);
-
-  return <>Character Count: {count}</>;
+  return (
+    <button className={props.value} onClick={props.action}>{props.value}</button>
+  )
 }
 
+function ButtonRow() {
+  return(
+    <div className="button-row">
+      <Button action = { () => console.log(" SAVE ") } value = "Save" />
+      <Button action = { () => console.log(" DELETE ") }value = "Delete" />
+      <Button action = { () => console.log(" STASH ") }value = "Stash" /> 
+    </div>
+  )
+
+}
 
 function App() {
   return (
     <RecoilRoot>
-      <CharacterCounter />
+      <EditorText />
+      <WordCount />
+      <ButtonRow />
     </RecoilRoot>
   );
 }
-
-console.log(document.getElementById("app"));
 
 ReactDOM.render(App(), document.getElementById("app"))
