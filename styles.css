@@ -1,0 +1,46 @@
+    body {
+      display: flex;
+      justify-content: center;
+      background-color: #EBF2FA;
+    }
+
+    #title{
+      font-family: monospace;
+      font-size: 30px;
+      color: #427AA1;
+      text-shadow: 4px 4px 14px lightslategray;
+    }
+
+    textarea {
+      outline: none;
+      width: 90vw;
+      max-width: 650px;
+      height: 300px;
+      color: #EBF2FA;
+      font-size: 16px;
+      font-family: monospace;
+      background-color: #3b5c83;
+      border-radius: 18px;
+      border: 1px solid gray;
+      border-left: none;
+      border-top: none;
+      padding: 10px;
+      box-shadow: 4px 4px 14px lightslategray;
+    }
+    #count{
+      font-family: monospace;
+      font-size: 14px;
+      color: #427AA1;
+    }
+    button {
+      margin: 4px;
+      color: #EBF2FA;
+      font-family: monospace;
+      border: none;
+      border-radius: 4px;
+      padding: 5px;
+      width: 65px;
+      background-color: #427AA1;
+      box-shadow: 4px 2px 8px lightslategray;
+      
+    }

@@ -1,3 +1,8 @@
+var mixpanel = require("mixpanel-browser");
+mixpanel.init("12fa2800ccbf44a5c36c37bc9776e4c0");
+
+import save from "./helpers/helpers"
+
 import React from 'react';
 import ReactDOM from "react-dom";
 import {
@@ -7,6 +12,7 @@ import {
   useRecoilState,
   useRecoilValue,
   useSetRecoilState,
+  constSelector,
 } from 'recoil';
 
 //current state of text editor
@@ -33,28 +39,36 @@ const wordCountAtom = atom({
   default: 0,
 })
 
-const atomWithNoSelector = atom({
-  key: "bigbadwilly",
-  default: "Play on"
-})
+const updatePagesCount = atom({
+  key: "updatePagesCount",
+  default: 1,
+});
+
+
+const updatePagesCountSelector = selector({
+  key: "updatePagesCountSelector",
+  get: ({ get }) => get(updatePagesCount),
+  set: ({ set }, newValue) => { set(updatePagesCount, newValue); },
+});
 
 const wordCountSelector = selector({
   key: "wordCountSelector", 
   get: ({get}) => ( get(wordCountAtom) ),
-  set: ({set}, newValue) => { set(wordCountAtom, newValue) }
+  set: ({set}, newValue) => {
+    set(wordCountAtom, newValue) 
+  }
 })
 
 //Components that need to read from and write to an atom should use useRecoilState() as shown below:
 function EditorText(props) {
+
+  let pages = useRecoilValue(updatePagesCountSelector);
   const [copy, setEditorText] = useRecoilState(updateEditorSelector);
-  
-  const setCounterInt = useSetRecoilState(wordCountSelector);
-  
+  const setCounterInt = useSetRecoilState(wordCountSelector);  
   const captureText = e => {
     setEditorText(e.target.value); 
     captureSpaces(e)
   }
-
   const captureSpaces = k => {
     let x = k.target.value.split(" ");
     let xLen = x.length;
@@ -64,22 +78,31 @@ function EditorText(props) {
     setCounterInt(xLen);
   }
 
-  return (
-    <div className="container">
-      <p id='title'>{props.heading}</p>      
-      <div id='editor'>
-        <textarea id="editorInput" onChange={captureText} value={copy}></textarea>
-      </div>
-    </div>
-  )
+  let editorArr = [];
+   
+  for( let i = 0; i<=pages; i++){
+      editorArr.push(
+        <div className="container">
+          <h1 id='title'></h1>      
+          <div id='editor'>
+            <textarea id="editorInput" onChange={captureText} value={copy}></textarea>
+          </div>
+        </div>
+      )
+    }
+  
+  console.log("EditorText -> editorArr", editorArr)
+
+  return editorArr;
 }
 
-function WordCount(){
-  const counter = useRecoilValue(wordCountAtom);
 
+function WordCount(props){
+  const counter = useRecoilValue(wordCountAtom);
   return (
     <div className="container">
       <p id='count'>Word Count: {counter}</p>
+      <p id='must'></p>
     </div>
   )
 }
@@ -91,39 +114,28 @@ function Button(props){
 }
 
 function ButtonRow(props) {
-  let save = useRecoilValue(editorStateAtom);
-  console.log( save );
+  let [pagenum, setPageNumber] = useRecoilState(updatePagesCount);
   return(
     <div className={props.className}>
-      <Button action = { () => console.log(save) } value = "Save" />
-      <Button action = { () => console.log(" DELETE ") }value = "Delete" />
-      <Button action = { () => console.log(" STASH ") }value = "Stash" /> 
+      <Button action = { () => { save } } value = "Save" />
+      <Button action = { () => console.log(" DELETE ") } value = "Delete" />
+      <Button action = { () => console.log(" STASH ") } value = "Stash" /> 
+      <Button action = { () => { setPageNumber(pagenum + 1) } } value = "+" /> 
+      <Button action = { () => { setPageNumber(pagenum - 1) } } value = "-" /> 
     </div>
   )
 
 }
 
-function CallHook(props){
-  let playing = useRecoilState(atomWithNoSelector);
-  return(
-    <>
-      <p>{playing}</p> {/*Throws an because: "Functions are not valid as React child*/}
-      <p>{props.what}</p>
-    </>
-  )
-}
-
 function App() {
+
   return (
     <RecoilRoot>      
-      <EditorText heading = "Simple text editing with word count" />
-      <WordCount />
+      { <EditorText heading = "Type:" /> }
+      <WordCount mustBe = "Must Be here to Render on Map" />
       <ButtonRow className="buttons-container" />
-      <CallHook what="tamborine" />
     </RecoilRoot>
   );
 }
 
 ReactDOM.render(App(), document.getElementById("app"))
-
-module.exports(EditorText);
